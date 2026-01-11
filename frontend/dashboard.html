@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard • Time Nest</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+
+<body>
+  <header>
+    <h1>Time Nest</h1>
+    <button id="hamburger-menu" title="Toggle menu">☰</button>
+    <nav id="navbar">
+      <a href="./index.html">Home</a>
+      <a href="./tasks.html">Tasks</a>
+      <a href="./habits.html">Habits</a>
+      <a href="./profile.html">Profile</a>
+      <button id="theme-toggle" title="Toggle theme">🌙</button>
+      <button id="logout-btn" class="logout-btn">Logout</button>
+    </nav>
+  </header>
+  <main>
+    <h2 class="welcome-title">Welcome Back! 👋</h2>
+
+    <!-- First Row: Profile & Tools to Focus -->
+    <section class="grid">
+      <div class="card">
+        <h3>Profile</h3>
+        <div id="profile-info" class="mt-1-5">
+          <div class="text-center mb-1-5">
+            <div class="profile-avatar">
+              <span id="user-avatar">U</span>
+            </div>
+          </div>
+          <a href="./profile.html" class="action-link">
+            <button class="secondary mt-1">View Full Profile</button>
+          </a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Tools to Focus</h3>
+        <div id="focus-tools" class="mt-1">
+          <p class="muted">Your productivity tools and resources will appear here.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Second Row: To Do & Quick Actions -->
+    <section class="grid section-grid-spaced">
+      <div class="card">
+        <h3>To Do</h3>
+        <div id="todo-list" class="mt-1">
+          <p class="muted">No tasks yet. <a href="./tasks.html">Create one</a></p>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Quick Actions</h3>
+        <div class="action-buttons mt-1">
+          <a href="./tasks.html" class="action-link">
+            <button class="secondary">📝 Manage Tasks</button>
+          </a>
+          <a href="./habits.html" class="action-link">
+            <button class="secondary">🎯 Track Habits</button>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="./js/theme.js"></script>
+  <script src="./js/auth.js"></script>
+  <script src="./js/dashboard.js"></script>
+  <script>
+    // Hamburger menu toggle
+    const hamburger = document.getElementById('hamburger-menu');
+    const navbar = document.getElementById('navbar');
+    if (hamburger) {
+      hamburger.addEventListener('click', () => {
+        navbar.classList.toggle('active');
+      });
+
+      // Close menu when a link is clicked
+      navbar.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          navbar.classList.remove('active');
+        });
+      });
+    }
+
+    // Logout button functionality
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        window.TimeNestAuth.logout();
+        window.location.href = './login.html';
+      });
+    }
+
+    // Load user profile info
+    async function loadUserProfile() {
+      const res = await window.TimeNestAuth.me();
+      if (res.ok && res.data.user) {
+        const email = res.data.user.email;
+        document.getElementById('user-email').textContent = email;
+        document.getElementById('user-name').textContent = email.split('@')[0];
+        document.getElementById('user-avatar').textContent = email.charAt(0).toUpperCase();
+      }
+    }
+
+    loadUserProfile();
+  </script>
+
+</html>

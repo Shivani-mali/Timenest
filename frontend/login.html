@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login • Time Nest</title>
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Time Nest</h1>
+      <nav>
+        <a href="./index.html">Home</a>
+        <button id="theme-toggle" title="Toggle theme">🌙</button>
+      </nav>
+    </header>
+    <main>
+      <section class="card">
+        <h2>Login</h2>
+        <form id="login-form">
+          <label>
+            Email
+            <input type="email" id="email" required />
+          </label>
+          <label>
+            Password
+            <input type="password" id="password" required />
+          </label>
+          <button type="submit">Sign in</button>
+        </form>
+        <p id="login-status" class="muted"></p>
+        <p class="muted text-center">Don't have an account? <a href="./register.html">Create one</a></p>
+      </section>
+    </main>
+    <script src="./js/auth.js"></script>
+    <script>
+      const form = document.getElementById('login-form');
+      const statusEl = document.getElementById('login-status');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        statusEl.textContent = 'Submitting...';
+        try {
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+          const res = await window.TimeNestAuth.login(email, password);
+          if (res.ok) {
+            statusEl.textContent = 'Signed in! Redirecting...';
+            window.location.href = './dashboard.html';
+          } else {
+            statusEl.textContent = res.data?.error || `Login failed (${res.status})`;
+          }
+        } catch (err) {
+          statusEl.textContent = 'Login failed';
+        }
+      });
+    </script>
+  </body>
+  <script src="./js/theme.js"></script>
+</html>

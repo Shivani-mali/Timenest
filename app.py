@@ -1,0 +1,28 @@
+from flask import Flask, jsonify
+from pymongo import MongoClient
+import os
+
+
+def create_app():
+    app = Flask(__name__)
+
+    mongo_uri = os.environ.get("MONGO_URI", "mongodb://localhost:27017/?directConnection=true")
+    client = MongoClient(mongo_uri, serverSelectionTimeoutMS=2000)
+
+    # Validate the connection up front so the root route reflects real status.
+    try:
+        client.admin.command("ping")
+        app.db = client[os.environ.get("MONGO_DB_NAME", "timenest")]
+        _status = {"ok": True, "message": "MongoDB connected"}
+    except Exception as exc:  # fallback so the route shows failure details
+        _status = {"ok": False, "message": f"MongoDB connection failed: {exc}"}
+
+    @app.route("/")
+    def home():
+        return jsonify(_status)
+
+    @app.teardown_appcontext
+    def close_client(_=None):
+        client.close()
+
+    return app

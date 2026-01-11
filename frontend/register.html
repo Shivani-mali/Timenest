@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Register • Time Nest</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+
+<body>
+  <header>
+    <h1>Time Nest</h1>
+    <nav>
+      <a href="./index.html">Home</a>
+      <a href="./login.html">Login</a>
+      <button id="theme-toggle" title="Toggle theme">🌙</button>
+    </nav>
+  </header>
+  <main>
+    <section class="card">
+      <h2>Create Account</h2>
+      <form id="register-form">
+        <label>
+          Name
+          <input type="text" id="name" required />
+        </label>
+        <label>
+          <label>
+            Phone Number
+            <input type="tel" id="phone" required />
+          </label>
+          Email
+          <input type="email" id="email" required />
+        </label>
+        <label>
+          Password
+          <input type="password" id="password" required />
+        </label>
+
+        <button type="submit">Create account</button>
+      </form>
+      <p id="register-status" class="muted"></p>
+      <p class="muted text-center">Already have an account? <a href="./login.html">Sign in</a></p>
+    </section>
+  </main>
+  <script src="./js/auth.js"></script>
+  <script>
+    const form = document.getElementById('register-form');
+    const statusEl = document.getElementById('register-status');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      statusEl.textContent = 'Submitting...';
+      try {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const res = await window.TimeNestAuth.register(email, password);
+        if (res.ok) {
+          statusEl.textContent = 'Account created! Redirecting...';
+          window.location.href = './login.html';
+        } else {
+          statusEl.textContent = res.data?.error || `Registration failed (${res.status})`;
+        }
+      } catch (err) {
+        statusEl.textContent = 'Registration failed';
+      }
+    });
+  </script>
+</body>
+<script src="./js/theme.js"></script>
+
+</html>

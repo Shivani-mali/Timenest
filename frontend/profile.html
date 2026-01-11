@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Profile • Time Nest</title>
+    <link rel="stylesheet" href="./css/style.css" />
+</head>
+
+<body class="profile-page">
+    <header>
+        <h1>Time Nest</h1>
+        <button id="hamburger-menu" title="Toggle menu">☰</button>
+        <nav id="navbar">
+            <a href="./dashboard.html">Dashboard</a>
+            <a href="./tasks.html">Tasks</a>
+            <a href="./habits.html">Habits</a>
+            <a href="./profile.html" class="active-nav-link">Profile</a>
+            <button id="theme-toggle" title="Toggle theme">🌙</button>
+            <button id="logout-btn" class="logout-btn">Logout</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Profile Header -->
+        <section class="profile-header">
+            <div class="profile-avatar-container">
+                <div class="profile-avatar-large" id="profile-avatar-display">
+                    <span id="profile-avatar">U</span>
+                </div>
+                <label class="avatar-upload" title="Upload Profile Picture">
+                    <input type="file" id="avatar-input" accept="image/*">
+                    📷
+                </label>
+            </div>
+            <div class="profile-name" id="profile-name">User Name</div>
+            <div class="profile-email" id="profile-email">user@example.com</div>
+            <button class="profile-edit-btn" id="edit-profile-btn">✏️ Edit Profile</button>
+        </section>
+
+        <!-- Edit Profile Section -->
+        <section class="edit-profile-section" id="edit-profile-section">
+            <h2>✏️ Edit Profile</h2>
+            <form id="edit-profile-form">
+                <div class="form-group">
+                    <label for="edit-name">Display Name</label>
+                    <input type="text" id="edit-name" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-email">Email</label>
+                    <input type="email" id="edit-email" placeholder="Enter your email" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="calendar-url">Google Calendar URL (Optional)</label>
+                    <input type="url" id="calendar-url" placeholder="Paste your Google Calendar embed URL">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">Save Changes</button>
+                    <button type="button" class="btn-cancel" id="cancel-edit-btn">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Statistics -->
+        <section class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-label">Total Tasks</div>
+                <div class="stat-value" id="stat-tasks">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value" id="stat-completed">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">In Progress</div>
+                <div class="stat-value" id="stat-pending">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Completion Rate</div>
+                <div class="stat-value" id="stat-rate">0%</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Total Habits</div>
+                <div class="stat-value" id="stat-habits">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Best Streak</div>
+                <div class="stat-value" id="stat-streak">0</div>
+            </div>
+        </section>
+
+        <!-- Google Calendar Section -->
+        <section class="calendar-section">
+            <h2>📅 My Calendar</h2>
+            
+            <div class="calendar-setup-guide">
+                <h3>🔧 Setup Your Calendar</h3>
+                <p><strong>To display your Google Calendar without sign-in:</strong></p>
+                <ol>
+                    <li>Go to <a href="https://calendar.google.com/calendar/u/0/r/settings" target="_blank">Google Calendar Settings</a></li>
+                    <li>Select your calendar from the left sidebar</li>
+                    <li>Scroll to <strong>"Access permissions"</strong></li>
+                    <li>Check ✅ <strong>"Make available to public"</strong></li>
+                    <li>Scroll down to <strong>"Integrate calendar"</strong> section</li>
+                    <li>Copy the <strong>"Embed code"</strong> iframe src URL</li>
+                    <li>Click "Edit Profile" above and paste the URL in the Calendar URL field</li>
+                </ol>
+                <div class="calendar-note">
+                    <strong>⚠️ Note:</strong> Your calendar must be set to public to display here. Only share calendars you're comfortable making public.
+                </div>
+            </div>
+            
+            <div class="calendar-placeholder">
+                <div class="placeholder-icon">📅</div>
+                <p>Your Google Calendar will appear here once configured</p>
+                <p class="muted">Follow the setup guide above to connect your calendar</p>
+            </div>
+        </section>
+
+        <!-- Work History -->
+        <section class="history-section">
+            <h2 class="mb-1-5">Work History</h2>
+            <div id="history-container">
+                <div class="empty-state">
+                    <div class="empty-icon">📋</div>
+                    <p>No work history yet. Start by creating tasks or habits!</p>
+                </div>
+            </div>
+        </section>
+
+    <script src="./js/theme.js"></script>
+    <script src="./js/auth.js"></script>
+    <script>
+        // Hamburger menu toggle
+        const hamburger = document.getElementById('hamburger-menu');
+        const navbar = document.getElementById('navbar');
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                navbar.classList.toggle('active');
+            });
+
+            navbar.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navbar.classList.remove('active');
+                });
+            });
+        }
+
+        // Logout button functionality
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                window.TimeNestAuth.logout();
+                window.location.href = './login.html';
+            });
+        }
+
+        // Load user profile and statistics
+        async function loadProfile() {
+            try {
+                // Get user info
+                const userRes = await window.TimeNestAuth.me();
+                if (!userRes.ok) {
+                    window.location.href = './login.html';
+                    return;
+                }
+
+                const email = userRes.data.user.email;
+                const name = email.split('@')[0];
+
+                document.getElementById('profile-name').textContent = name.charAt(0).toUpperCase() + name.slice(1);
+                document.getElementById('profile-email').textContent = email;
+                document.getElementById('profile-avatar').textContent = email.charAt(0).toUpperCase();
+
+                // Load saved avatar if exists
+                const savedAvatar = localStorage.getItem('profile-avatar-' + email);
+                if (savedAvatar) {
+                    const avatarDisplay = document.getElementById('profile-avatar-display');
+                    avatarDisplay.innerHTML = `<img src="${savedAvatar}" alt="Profile Picture">`;
+                }
+
+                // Fetch tasks from API
+                const tasksRes = await fetch('/api/tasks', {
+                    headers: { 'Authorization': `Bearer ${window.TimeNestAuth.getToken()}` }
+                });
+
+                if (tasksRes.ok) {
+                    const tasks = await tasksRes.json();
+                    const completed = tasks.filter(t => t.status === 'completed').length;
+                    const pending = tasks.filter(t => t.status !== 'completed').length;
+                    const rate = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
+
+                    document.getElementById('stat-tasks').textContent = tasks.length;
+                    document.getElementById('stat-completed').textContent = completed;
+                    document.getElementById('stat-pending').textContent = pending;
+                    document.getElementById('stat-rate').textContent = rate + '%';
+
+                    // Display history
+                    displayHistory(tasks);
+                }
+
+                // Fetch habits from API
+                const habitsRes = await fetch('/api/habits', {
+                    headers: { 'Authorization': `Bearer ${window.TimeNestAuth.getToken()}` }
+                });
+
+                if (habitsRes.ok) {
+                    const habits = await habitsRes.json();
+                    document.getElementById('stat-habits').textContent = habits.length;
+
+                    const maxStreak = habits.length > 0
+                        ? Math.max(...habits.map(h => h.streak || 0))
+                        : 0;
+                    document.getElementById('stat-streak').textContent = maxStreak;
+                }
+            } catch (err) {
+                console.error('Error loading profile:', err);
+            }
+        }
+
+        // Handle avatar upload
+        const avatarInput = document.getElementById('avatar-input');
+        avatarInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    const imageData = event.target.result;
+                    const avatarDisplay = document.getElementById('profile-avatar-display');
+                    avatarDisplay.innerHTML = `<img src="${imageData}" alt="Profile Picture">`;
+                    
+                    // Save to localStorage
+                    const userRes = await window.TimeNestAuth.me();
+                    if (userRes.ok) {
+                        const email = userRes.data.user.email;
+                        localStorage.setItem('profile-avatar-' + email, imageData);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Edit Profile functionality
+        const editProfileBtn = document.getElementById('edit-profile-btn');
+        const editProfileSection = document.getElementById('edit-profile-section');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const editProfileForm = document.getElementById('edit-profile-form');
+
+        editProfileBtn.addEventListener('click', async () => {
+            editProfileSection.classList.toggle('active');
+            editProfileSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Pre-fill form with current data
+            const userRes = await window.TimeNestAuth.me();
+            if (userRes.ok) {
+                const email = userRes.data.user.email;
+                document.getElementById('edit-email').value = email;
+                
+                const savedName = localStorage.getItem('profile-name-' + email);
+                if (savedName) {
+                    document.getElementById('edit-name').value = savedName;
+                } else {
+                    document.getElementById('edit-name').value = email.split('@')[0];
+                }
+                
+                const savedCalendarUrl = localStorage.getItem('calendar-url-' + email);
+                if (savedCalendarUrl) {
+                    document.getElementById('calendar-url').value = savedCalendarUrl;
+                }
+            }
+        });
+
+        cancelEditBtn.addEventListener('click', () => {
+            editProfileSection.classList.remove('active');
+        });
+
+        editProfileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userRes = await window.TimeNestAuth.me();
+            if (!userRes.ok) return;
+            
+            const email = userRes.data.user.email;
+            const newName = document.getElementById('edit-name').value;
+            const calendarUrl = document.getElementById('calendar-url').value;
+            
+            // Save to localStorage
+            localStorage.setItem('profile-name-' + email, newName);
+            if (calendarUrl) {
+                localStorage.setItem('calendar-url-' + email, calendarUrl);
+                
+                // Update calendar iframe
+                const iframe = document.getElementById('calendar-iframe');
+                iframe.src = calendarUrl;
+            }
+            
+            // Update display
+            document.getElementById('profile-name').textContent = newName;
+            
+            // Hide edit section
+            editProfileSection.classList.remove('active');
+            
+            alert('Profile updated successfully!');
+        });
+
+        // Load saved profile data
+        async function loadSavedProfile() {
+            const userRes = await window.TimeNestAuth.me();
+            if (userRes.ok) {
+                const email = userRes.data.user.email;
+                
+                // Load saved name
+                const savedName = localStorage.getItem('profile-name-' + email);
+                if (savedName) {
+                    document.getElementById('profile-name').textContent = savedName;
+                }
+                
+                // Load saved calendar URL
+                const savedCalendarUrl = localStorage.getItem('calendar-url-' + email);
+                if (savedCalendarUrl) {
+                    document.getElementById('calendar-iframe').src = savedCalendarUrl;
+                }
+            }
+        }
+
+        function displayHistory(tasks) {
+            const container = document.getElementById('history-container');
+
+            if (tasks.length === 0) {
+                container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">📋</div>
+              <p>No work history yet. Start by creating tasks or habits!</p>
+            </div>
+          `;
+                return;
+            }
+
+            // Sort by date, most recent first
+            const sorted = tasks.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+            container.innerHTML = sorted.map(task => {
+                const date = task.createdAt ? new Date(task.createdAt).toLocaleDateString() : 'N/A';
+                const statusBadge = task.status === 'completed'
+                    ? '<span class="history-badge badge-completed">✓ Completed</span>'
+                    : '<span class="history-badge badge-pending">⏳ Pending</span>';
+
+                return `
+            <div class="history-item">
+              <div class="history-left">
+                <div class="history-title">${task.title || 'Untitled Task'}</div>
+                <div class="history-meta">Created: ${date}</div>
+              </div>
+              <div>${statusBadge}</div>
+            </div>
+          `;
+            }).join('');
+        }
+
+        loadProfile();
+        loadSavedProfile();
+    </script>
+</body>
+
+</html>
