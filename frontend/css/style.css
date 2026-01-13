@@ -419,25 +419,6 @@ button.secondary {
   color: var(--primary);
 }
 
-.auth-google-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.google-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: white;
-  color: #1f2933;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-}
-
 .profile-avatar {
   width: 80px;
   height: 80px;
@@ -1121,7 +1102,7 @@ body.focus-mode-active .focus-tool-card-active {
 }
 
 .badge-card {
-  background: rgba(15, 23, 42, 0.6);
+  background: rgb(255, 255, 255);
   border-radius: 12px;
   border: 1px dashed rgba(148, 163, 184, 0.45);
   padding: 1.25rem 1.1rem;
@@ -1129,7 +1110,12 @@ body.focus-mode-active .focus-tool-card-active {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  transition: all 0.25s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Dark mode: keep badges from being bright white on a dark background */
+[data-theme="dark"] .badge-card {
+  background: var(--panel);
 }
 
 .badge-card-header {
@@ -1174,7 +1160,7 @@ body.focus-mode-active .focus-tool-card-active {
   filter: none;
   border-style: solid;
   border-color: rgba(129, 140, 248, 0.8);
-  box-shadow: 0 10px 30px rgba(129, 140, 248, 0.35);
+  box-shadow: 0 10px 30px rgba(164, 173, 250, 0.35);
 }
 
 .badge-helper {

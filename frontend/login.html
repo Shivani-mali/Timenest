@@ -45,11 +45,6 @@
           </div>
 
           <button type="submit" class="mt-1" id="login-submit">Sign in</button>
-
-          <button type="button" class="secondary mt-1 auth-google-btn" id="google-signin">
-            <span class="google-icon">G</span>
-            <span>Sign in with Google</span>
-          </button>
         </form>
 
         <p id="login-status" class="muted mt-1"></p>
@@ -103,13 +98,6 @@
         }
       });
 
-      const googleBtn = document.getElementById('google-signin');
-      if (googleBtn) {
-        googleBtn.addEventListener('click', () => {
-          // Start Google OAuth 2.0 login flow handled by the backend
-          window.location.href = '/auth/google';
-        });
-      }
     </script>
   </body>
 </html>
