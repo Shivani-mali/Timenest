@@ -37,13 +37,7 @@ Time Nest is built with a focus on speed and simplicity, utilizing a lightweight
 | **Auth** | Flask-Login | Secure session management |
 | **Database** | SQLite | Lightweight data persistence |
 
----
 
-## 🏁 Getting Started
-
-### Prerequisites
-* Python 3.8+
-* Pip (Python package manager)
 
 ### Installation
 
