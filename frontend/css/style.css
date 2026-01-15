@@ -1303,6 +1303,58 @@ body.focus-mode-active .focus-tool-card-active {
   margin-bottom: 1.5rem;
 }
 
+/* Upload label (camera icon) overlay */
+.avatar-upload {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  background: linear-gradient(135deg, var(--primary), rgba(129,140,248,0.9));
+  color: white;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(15,23,42,0.6);
+  border: 3px solid rgba(255,255,255,0.06);
+  font-size: 1.15rem;
+}
+
+.avatar-upload input { /* keep the file input invisible but clickable */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Remove avatar button (small circular X) */
+.avatar-remove { display: none !important; }
+
+@media (max-width: 600px) {
+  .avatar-upload { right: -2px; bottom: -2px; width: 40px; height: 40px; }
+}
+
+/* Remove-avatar button inside Edit Profile */
+.remove-avatar-row { margin-top: 0.5rem; }
+.btn-remove {
+  background: linear-gradient(135deg, rgba(129,140,248,0.9), rgba(139,92,246,0.9));
+  color: white;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(15,23,42,0.45);
+}
+.btn-remove:hover { transform: translateY(-2px); }
+
+@media (max-width: 480px) {
+  .remove-avatar-row { justify-content: center; }
+}
+
 .profile-avatar-large {
   width: 120px;
   height: 120px;
