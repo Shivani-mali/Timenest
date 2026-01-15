@@ -1,36 +1,47 @@
-# Time Nest
+# ⏳ Time Nest
 
-Time Nest is a simple productivity web app with tasks, focus tools, and basic stats.
+**Master your time, build your routine, and find your focus.**
 
-**Stack:** Flask API + MongoDB + JWT auth, with a vanilla HTML/CSS/JS frontend.
+Time Nest is a streamlined, web-based productivity ecosystem. It bridges the gap between simple to-do lists and complex habit trackers by offering a unified, minimal interface designed to minimize cognitive load and maximize deep work.
 
-## Quick start
+---
 
-1. Create and activate a virtualenv (Windows PowerShell):
-   ```powershell
-   python -m venv .venv
-   . .\.venv\Scripts\Activate.ps1
-   ```
-2. Install backend deps:
-   ```powershell
-   pip install -r backend/requirements.txt
-   ```
-3. Create `backend/.env` with at least:
-   ```dotenv
-   MONGO_URI=mongodb://localhost:27017/?directConnection=true
-   MONGO_DB_NAME=timenest
-   JWT_SECRET_KEY=change-me
-   SECRET_KEY=change-me-too
-   ```
-4. Run the app:
-   ```powershell
-   flask --app backend.app --debug run
-   ```
-5. Open the UI at `http://127.0.0.1:5000/` and use the **Dashboard**, **Tasks**, **Tools**, and **Profile** pages.
+## 🚀 Core Pillars
 
-## Main features
+### ✅ Task Management
+Organize your day with precision. Create, prioritize, and check off tasks as you go. The interface is built to give you a clear overview of your "Next Actions" without the clutter.
 
-- Email/password auth with JWT
-- Task management with priorities and due dates
-- Focus tools that track streaks and time
-- Profile page with stats, work history, reminders, and badges
+### 🔥 Habit Tracking
+Consistency is the key to growth. Track your daily rituals and watch your streaks grow.
+* **Visual Progress:** See your consistency at a glance.
+* **Streak Protection:** Stay motivated by maintaining your daily momentum.
+
+### 🧠 Focus Mode
+Enter a distraction-free environment tailored for deep work.
+* **Minimalist UI:** All non-essential elements vanish.
+* **Timed Sessions:** Work in focused sprints to avoid burnout.
+
+### 📊 Personal Dashboard
+Your command center. Get a holistic view of your productivity data, task completion rates, and active habits in one unified snapshot.
+
+---
+
+## 🛠️ Technology Stack
+
+Time Nest is built with a focus on speed and simplicity, utilizing a lightweight architecture.
+
+| Component | Technology | Role |
+| :--- | :--- | :--- |
+| **Backend** | Python / Flask | RESTful API & Business Logic |
+| **Frontend** | JS / HTML5 / CSS3 | High-performance, vanilla UI |
+| **Auth** | Flask-Login | Secure session management |
+| **Database** | SQLite | Lightweight data persistence |
+
+
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone [https://github.com/yourusername/time-nest.git](https://github.com/yourusername/time-nest.git)
+   cd time-nest
