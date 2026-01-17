@@ -6,8 +6,8 @@ Time Nest is a streamlined, web-based productivity ecosystem. It bridges the gap
 
 ---
 
-## 🚀 Core Pillars
-
+## 🚀 Core Pillars:
+Time Nest is built around four core pillars that work together to support sustainable productivity:
 ### ✅ Task Management
 Organize your day with precision. Create, prioritize, and check off tasks as you go. The interface is built to give you a clear overview of your "Next Actions" without the clutter.
 
@@ -37,11 +37,3 @@ Time Nest is built with a focus on speed and simplicity, utilizing a lightweight
 | **Auth** | Flask-Login | Secure session management |
 | **Database** | SQLite | Lightweight data persistence |
 
-
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone [https://github.com/yourusername/time-nest.git](https://github.com/yourusername/time-nest.git)
-   cd time-nest
