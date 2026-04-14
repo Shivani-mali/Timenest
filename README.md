@@ -28,12 +28,35 @@ Your command center. Get a holistic view of your productivity data, task complet
 
 ## 🛠️ Technology Stack
 
-Time Nest is built with a focus on speed and simplicity, utilizing a lightweight architecture.
+TimeNest is designed for high performance and scalability using a modern serverless architecture.
 
 | Component | Technology | Role |
 | :--- | :--- | :--- |
-| **Backend** | Python / Flask | RESTful API & Business Logic |
-| **Frontend** | JS / HTML5 / CSS3 | High-performance, vanilla UI |
-| **Auth** | Flask-Login | Secure session management |
-| **Database** | SQLite | Lightweight data persistence |
+| **Backend** | Python / Flask | Serverless API & Business Logic |
+| **Frontend** | Vanilla JS / HTML5 / CSS3 | Premium, high-performance UI |
+| **Auth** | Firebase Auth | Secure, multi-platform authentication |
+| **Database** | Google Firestore | Real-time, scalable NoSQL database |
+| **Hosting** | Vercel | Global edge deployment |
+
+---
+
+## ☁️ Deployment
+
+### 1. Vercel (Recommended)
+This project is configured for one-click deployment to Vercel. 
+1. Push this repository to GitHub.
+2. Connect your GitHub repository to [Vercel](https://vercel.com).
+3. Add the following **Environment Variables** in the Vercel Dashboard:
+   - `FIREBASE_SERVICE_ACCOUNT_JSON`: The full JSON content of your Firebase Service Account key.
+   - `JWT_SECRET_KEY`: A random string for securing tokens.
+   - `FIREBASE_PROJECT_ID`: Your Firebase Project ID.
+
+### 2. Local Development
+1. Clone the repository.
+2. Create a virtual environment: `python -m venv .venv`.
+3. Install dependencies: `pip install -r requirements.txt`.
+4. Create a `.env` file based on `.env.example`.
+5. Run the backend: `python -m backend.app`.
+6. Open `http://localhost:5000` in your browser.
+
 

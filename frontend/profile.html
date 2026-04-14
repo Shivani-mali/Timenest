@@ -4,19 +4,23 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Profile • Time Nest</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-            rel="stylesheet"
-        />
+    <link rel="icon" type="image/png" href="./assets/logo.png">
+    <title>TimeNest • Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet"
+    />
     <link rel="stylesheet" href="./css/style.css" />
 </head>
 
 <body class="profile-page">
     <header>
-        <h1>Time Nest</h1>
+        <a href="./dashboard.html" class="brand">
+            <img src="./assets/logo.png" alt="TimeNest" class="header-logo">
+            <h1>TimeNest</h1>
+        </a>
         <button id="hamburger-menu" title="Toggle menu">☰</button>
         <nav id="navbar">
             <a href="./dashboard.html">Dashboard</a>
@@ -380,22 +384,31 @@
                     return;
                 }
 
-                const email = userRes.data.user.email;
-                const name = email.split('@')[0];
+                const user = userRes.data.user;
+                const email = user.email;
+                const name = user.name || email.split('@')[0];
+                const picture = user.picture;
 
-                document.getElementById('profile-name').textContent = name.charAt(0).toUpperCase() + name.slice(1);
+                document.getElementById('profile-name').textContent = name;
                 document.getElementById('profile-email').textContent = email;
-                document.getElementById('profile-avatar').textContent = email.charAt(0).toUpperCase();
+                document.getElementById('profile-avatar').textContent = name.charAt(0).toUpperCase();
 
-                // Load saved avatar if exists
-                const savedAvatar = localStorage.getItem('profile-avatar-' + email);
-                if (savedAvatar) {
-                    const avatarDisplay = document.getElementById('profile-avatar-display');
-                    avatarDisplay.innerHTML = `<img src="${savedAvatar}" alt="Profile Picture">`;
-                    const uploadLabel = document.getElementById('avatar-upload-label');
-                    const editRemoveBtn = document.getElementById('edit-remove-avatar-btn');
+                // Load saved avatar if exists from backend first, then local storage
+                const avatarDisplay = document.getElementById('profile-avatar-display');
+                const uploadLabel = document.getElementById('avatar-upload-label');
+                const editRemoveBtn = document.getElementById('edit-remove-avatar-btn');
+
+                if (picture) {
+                    avatarDisplay.innerHTML = `<img src="${picture}" alt="Profile Picture">`;
                     if (uploadLabel) uploadLabel.style.display = 'none';
                     if (editRemoveBtn) editRemoveBtn.style.display = 'inline-block';
+                } else {
+                    const savedAvatar = localStorage.getItem('profile-avatar-' + email);
+                    if (savedAvatar) {
+                        avatarDisplay.innerHTML = `<img src="${savedAvatar}" alt="Profile Picture">`;
+                        if (uploadLabel) uploadLabel.style.display = 'none';
+                        if (editRemoveBtn) editRemoveBtn.style.display = 'inline-block';
+                    }
                 }
 
                 // Fetch tasks from API
@@ -480,21 +493,13 @@
             // Pre-fill form with current data
             const userRes = await window.TimeNestAuth.me();
             if (userRes.ok) {
-                const email = userRes.data.user.email;
-                document.getElementById('edit-email').value = email;
-                
-                const savedName = localStorage.getItem('profile-name-' + email);
-                if (savedName) {
-                    document.getElementById('edit-name').value = savedName;
-                } else {
-                    document.getElementById('edit-name').value = email.split('@')[0];
-                }
-                
-                const savedProfile = JSON.parse(localStorage.getItem('timenest_profile_' + email) || '{}');
-                if (savedProfile.username) document.getElementById('edit-username').value = savedProfile.username;
-                if (savedProfile.goalMinutes) document.getElementById('edit-goal').value = savedProfile.goalMinutes;
-                if (savedProfile.workType) document.getElementById('edit-work-type').value = savedProfile.workType;
-                if (savedProfile.focusMethod) document.getElementById('edit-focus-method').value = savedProfile.focusMethod;
+                const user = userRes.data.user;
+                document.getElementById('edit-email').value = user.email;
+                document.getElementById('edit-name').value = user.name || '';
+                document.getElementById('edit-username').value = user.username || '';
+                document.getElementById('edit-goal').value = user.goal_minutes || '';
+                document.getElementById('edit-work-type').value = user.work_type || '';
+                document.getElementById('edit-focus-method').value = user.focus_method || '';
             }
         });
 
@@ -505,37 +510,39 @@
         editProfileForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const userRes = await window.TimeNestAuth.me();
-            if (!userRes.ok) return;
-            
-            const email = userRes.data.user.email;
-            const newName = document.getElementById('edit-name').value;
-            const username = document.getElementById('edit-username').value;
-            const goalMinutes = parseInt(document.getElementById('edit-goal').value || '0', 10) || 0;
-            const workType = document.getElementById('edit-work-type').value;
-            const focusMethod = document.getElementById('edit-focus-method').value;
-            
-            // Save to localStorage
-            localStorage.setItem('profile-name-' + email, newName);
-            const profileKey = 'timenest_profile_' + email;
-            const existing = JSON.parse(localStorage.getItem(profileKey) || '{}');
-            const updated = {
-                ...existing,
-                fullName: newName,
-                username,
-                goalMinutes,
-                workType,
-                focusMethod,
+            const btn = editProfileForm.querySelector('.btn-save');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            const payload = {
+                name: document.getElementById('edit-name').value,
+                username: document.getElementById('edit-username').value,
+                goal_minutes: parseInt(document.getElementById('edit-goal').value || '0', 10) || 0,
+                work_type: document.getElementById('edit-work-type').value,
+                focus_method: document.getElementById('edit-focus-method').value,
             };
-            localStorage.setItem(profileKey, JSON.stringify(updated));
             
-            // Update display
-            document.getElementById('profile-name').textContent = newName;
-            
-            // Hide edit section
-            editProfileSection.classList.remove('active');
-            
-            alert('Profile updated successfully!');
+            try {
+                const res = await window.TimeNestAuth.updateProfile(payload);
+                if (res.ok) {
+                    const user = res.data.user;
+                    // Update display
+                    document.getElementById('profile-name').textContent = user.name;
+                    // Update username field for next edit
+                    document.getElementById('edit-username').value = user.username || '';
+                    
+                    editProfileSection.classList.remove('active');
+                    alert('Profile updated successfully!');
+                } else {
+                    alert('Error: ' + (res.data?.error || 'Could not update profile'));
+                }
+            } catch (err) {
+                console.error('Update profile error:', err);
+                alert('Something went wrong.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save Changes';
+            }
         });
 
         // Remove avatar handler (Edit Profile button)
@@ -567,27 +574,6 @@
                     alert('Could not remove avatar. See console for details.');
                 }
             });
-        }
-
-        // Load saved profile data
-        async function loadSavedProfile() {
-            const userRes = await window.TimeNestAuth.me();
-            if (userRes.ok) {
-                const email = userRes.data.user.email;
-                
-                // Load saved name
-                const savedName = localStorage.getItem('profile-name-' + email);
-                if (savedName) {
-                    document.getElementById('profile-name').textContent = savedName;
-                }
-                const savedProfile = JSON.parse(localStorage.getItem('timenest_profile_' + email) || '{}');
-                if (savedProfile.username) {
-                    document.getElementById('edit-username').value = savedProfile.username;
-                }
-                if (savedProfile.goalMinutes) {
-                    document.getElementById('edit-goal').value = savedProfile.goalMinutes;
-                }
-            }
         }
 
         function displayHistory(tasks) {
@@ -689,7 +675,6 @@
         }
 
         loadProfile();
-        loadSavedProfile();
         initReminderSettings();
     </script>
         </script>

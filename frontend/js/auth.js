@@ -44,5 +44,12 @@
     localStorage.removeItem(TOKEN_KEY);
   }
 
-  window.TimeNestAuth = { login, register, me, getToken, setToken, logout };
+  async function updateProfile(payload) {
+    return jsonFetch(`${API}/auth/profile`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  window.TimeNestAuth = { login, register, me, updateProfile, getToken, setToken, logout };
 })();
